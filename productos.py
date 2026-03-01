@@ -1,53 +1,43 @@
 import sqlite3
+from database import get_conexion
 
 def agregar_producto(nombre, categoria, precio_costo, precio_venta, stock, stock_minimo):
-    conexion = sqlite3.connect("negocio.db")
+    conexion = get_conexion()
     cursor = conexion.cursor()
-
     cursor.execute("""
-        INSERT INTO productos (nombre, categoria, precio_costo, precio_venta, stock, stock_minimo) VALUES (?, ?, ? , ? , ? ,?)
-    """,(nombre, categoria, precio_costo, precio_venta, stock, stock_minimo))
-
+        INSERT INTO productos (nombre, categoria, precio_costo, precio_venta, stock, stock_minimo) VALUES (?, ?, ?, ?, ?, ?)
+    """, (nombre, categoria, precio_costo, precio_venta, stock, stock_minimo))
     conexion.commit()
     conexion.close()
-    print(f"Fue agregado: Producto: {nombre}, Categoria: {categoria}, Precio de costo: {precio_costo}, Precio de venta: {precio_venta}, Stock: {stock}, Stock minimo {stock_minimo}")
-
+    print(f"Producto '{nombre}' agregado correctamente.")
 
 def listar_productos():
-    conexion = sqlite3.connect("negocio.db")
+    conexion = get_conexion()
     cursor = conexion.cursor()
-
-    cursor.execute("""
-        SELECT * FROM productos
-    """)
-
+    cursor.execute("SELECT * FROM productos")
     resultados = cursor.fetchall()
-    for productos in resultados:
-        print(productos)
-    conexion.close()
-
-
-def actualizar_stock(producto_id, cantidad):
-    conexion = sqlite3.connect("negocio.db")
-    cursor = conexion.cursor()
-
-    cursor.execute("""
-        UPDATE productos SET stock = stock - ? WHERE id = ?
-    """, (cantidad, producto_id))
-    
-    conexion.commit()
+    for producto in resultados:
+        print(producto)
     conexion.close()
 
 def obtener_producto(producto_id):
-    conexion = sqlite3.connect("negocio.db")
+    conexion = get_conexion()
     cursor = conexion.cursor()
-
-    cursor.execute(""" 
-        SELECT * FROM productos WHERE id = ?
-    """,(producto_id,))
-
-    resultados = cursor.fetchone()
-
+    cursor.execute("SELECT * FROM productos WHERE id = ?", (producto_id,))
+    resultado = cursor.fetchone()
     conexion.close()
+    return resultado
 
-    return resultados
+def actualizar_stock(producto_id, cantidad, cursor=None):
+    if cursor is None:
+        conexion = get_conexion()
+        cursor = conexion.cursor()
+        cursor.execute("""
+            UPDATE productos SET stock = stock - ? WHERE id = ?
+        """, (cantidad, producto_id))
+        conexion.commit()
+        conexion.close()
+    else:
+        cursor.execute("""
+            UPDATE productos SET stock = stock - ? WHERE id = ?
+        """, (cantidad, producto_id))

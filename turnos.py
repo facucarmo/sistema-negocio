@@ -1,8 +1,9 @@
 from datetime import datetime
 import sqlite3
+from database import get_conexion
 
 def abrir_turno(empleado_id):
-    conexion = sqlite3.connect("negocio.db")
+    conexion = get_conexion()
     cursor = conexion.cursor()
 
     ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -27,5 +28,3 @@ def cerrar_turno(turno_id):
 
     conexion.commit()
     conexion.close()
-
-cerrar_turno(1)

@@ -12,7 +12,6 @@ def crear_database():
         )
     """)
 
-
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS productos (
             id INTEGER PRIMARY KEY,
@@ -64,4 +63,10 @@ def crear_database():
     conexion.close()
     print("Base de datos creada correctamente.")
 
-crear_database()
+def get_conexion():
+    conexion = sqlite3.connect("negocio.db")
+    conexion.execute("PRAGMA foreign_keys = ON")
+    return conexion
+
+if __name__ == "__main__":
+    crear_database()

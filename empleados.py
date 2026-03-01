@@ -1,7 +1,8 @@
 import sqlite3
+from database import get_conexion
 
 def agregar_empleado(nombre, pin):
-    conexion = sqlite3.connect("negocio.db")
+    conexion = get_conexion()
     cursor = conexion.cursor()
 
     cursor.execute("""
